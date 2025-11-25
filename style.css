@@ -20,6 +20,7 @@ body {
     height: 26px;
     opacity: 0.8;
     transition: opacity 0.2s, transform 0.2s;
+    filter: invert()
 }
 
 .social-header img:hover {
@@ -66,3 +67,4 @@ p {
     backdrop-filter: blur(8px);
     box-shadow: 0 0 30px rgba(0,0,0,0.4);
 }
+
