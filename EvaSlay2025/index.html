@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eva Slay 2025</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+/* (your styles unchanged — omitted here for brevity) */
+</style>
+</head>
+<body>
+
+<h1>Eva Slay 2025</h1>
+<input id="dateInput" type="text">
+<div class="card" id="result">
+  <p id="resultText"></p>
+  <img id="resultImage">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+let entries = {};
+let availableDates = [];
+
+fetch("entries.json")
+  .then(r => r.json())
+  .then(data => {
+    entries = data;
+    availableDates = Object.keys(entries);
+    init();
+  });
+
+function init() {
+  flatpickr("#dateInput", {
+    enable: availableDates,
+    dateFormat: "Y-m-d",
+    onChange: (dates) => show(dates[0].toISOString().slice(0,10))
+  });
+  show(availableDates[0]);
+}
+
+function show(date) {
+  const e = entries[date];
+  if (!e) return;
+  document.getElementById("resultText").textContent = e.entry;
+  document.getElementById("resultImage").src = `images/${e.image}`;
+}
+</script>
+</body>
+</html>
