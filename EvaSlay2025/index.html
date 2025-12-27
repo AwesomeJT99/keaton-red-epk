@@ -149,25 +149,33 @@ fetch("entries.json")
   });
 
 function init() {
-  flatpickr("#dateInput", {
-    enable: availableDates,
-    dateFormat: "Y-m-d",
-    onChange: (dates) => {
-      if (dates.length) {
-        show(dates[0].toISOString().slice(0,10));
-      }
+  const picker = flatpickr("#dateInput", {
+  enable: availableDates,
+  dateFormat: "Y-m-d",
+  onChange: (dates) => {
+    if (dates.length) {
+      show(dates[0].toISOString().slice(0,10));
     }
-  });
+  }
+});
+window.datePicker = picker;
   show(availableDates[0]);
 }
 
 function show(date) {
   const e = entries[date];
   if (!e) return;
+
   document.getElementById("resultText").textContent = e.entry;
   document.getElementById("resultImage").src = `images/${e.image}`;
   document.getElementById("result").classList.add("show");
+
   currentDate = new Date(date);
+
+  // 🔑 keep the date input in sync
+  if (window.datePicker) {
+    window.datePicker.setDate(date, false);
+  }
 }
 
 // Prev / Next
@@ -188,9 +196,10 @@ const collage = document.getElementById("background-collage");
 
 function fillCollage() {
   collage.innerHTML = "";
-  const images = availableDates
-    .map(d => `images/${entries[d].image}`)
-    .sort(() => Math.random() - 0.5);
+  const images = [...availableDates]
+  .sort((a, b) => new Date(a) - new Date(b))
+  .map(d => `images/${entries[d].image}`)
+  .sort(() => Math.random() - 0.5);
 
   images.forEach(src => {
     const img = document.createElement("img");
@@ -206,4 +215,5 @@ setTimeout(fillCollage, 500);
 
 </body>
 </html>
+
 
