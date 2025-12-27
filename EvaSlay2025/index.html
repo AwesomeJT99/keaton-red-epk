@@ -142,7 +142,9 @@ fetch("entries.json")
   .then(r => r.json())
   .then(data => {
     entries = data;
-    availableDates = Object.keys(entries);
+    availableDates = Object.keys(entries).sort(
+  (a, b) => new Date(a) - new Date(b)
+);
     init();
   });
 
@@ -204,3 +206,4 @@ setTimeout(fillCollage, 500);
 
 </body>
 </html>
+
