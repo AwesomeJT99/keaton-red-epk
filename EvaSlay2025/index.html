@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Eva Slay 2025</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -42,6 +43,13 @@ h1 {
     z-index:1; 
     position:relative; 
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6); 
+}
+.controls {
+    display:flex;
+    align-items:center;
+    margin-bottom:1rem;
+    z-index:1;
+    position:relative;
 }
 .card {
     background:white;
@@ -103,19 +111,32 @@ input {
 }
 </style>
 </head>
+
 <body>
 
+<!-- BACKGROUND COLLAGE -->
+<div id="background-collage"></div>
+
 <h1>Eva Slay 2025</h1>
-<input id="dateInput" type="text">
+
+<!-- CONTROLS -->
+<div class="controls">
+    <button id="prevBtn">◀ Previous</button>
+    <input id="dateInput" type="text" placeholder="Select a date">
+    <button id="nextBtn">Next ▶</button>
+</div>
+
+<!-- CARD -->
 <div class="card" id="result">
   <p id="resultText"></p>
-  <img id="resultImage">
+  <img id="resultImage" alt="">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 let entries = {};
 let availableDates = [];
+let currentDate = null;
 
 fetch("entries.json")
   .then(r => r.json())
@@ -129,7 +150,11 @@ function init() {
   flatpickr("#dateInput", {
     enable: availableDates,
     dateFormat: "Y-m-d",
-    onChange: (dates) => show(dates[0].toISOString().slice(0,10))
+    onChange: (dates) => {
+      if (dates.length) {
+        show(dates[0].toISOString().slice(0,10));
+      }
+    }
   });
   show(availableDates[0]);
 }
@@ -139,10 +164,43 @@ function show(date) {
   if (!e) return;
   document.getElementById("resultText").textContent = e.entry;
   document.getElementById("resultImage").src = `images/${e.image}`;
+  document.getElementById("result").classList.add("show");
+  currentDate = new Date(date);
 }
+
+// Prev / Next
+function changeDay(offset) {
+  if (!currentDate) return;
+  const d = new Date(currentDate);
+  d.setDate(d.getDate() + offset);
+  const iso = d.toISOString().slice(0,10);
+  if (availableDates.includes(iso)) {
+    show(iso);
+  }
+}
+document.getElementById("prevBtn").onclick = () => changeDay(-1);
+document.getElementById("nextBtn").onclick = () => changeDay(1);
+
+// Background collage
+const collage = document.getElementById("background-collage");
+
+function fillCollage() {
+  collage.innerHTML = "";
+  const images = availableDates
+    .map(d => `images/${entries[d].image}`)
+    .sort(() => Math.random() - 0.5);
+
+  images.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "collage-img";
+    collage.appendChild(img);
+  });
+}
+
+window.addEventListener("resize", fillCollage);
+setTimeout(fillCollage, 500);
 </script>
+
 </body>
 </html>
-
-
-
