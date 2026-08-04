@@ -40,6 +40,13 @@ body {
     filter: drop-shadow(0 0 20px rgba(0,0,0,0.7));
 }
 
+.kr-img {
+    width: 500px;
+    height: 500px;
+    max-width: 70%;
+    object-fit: contain;
+}
+
 /* EPK content */
 .content {
     max-width: 800px;
